@@ -19,7 +19,7 @@ def fill_antecedents(current_crm, date_last):
         df_claims = fill_detailed_claims()
     else: df_claims = st.session_state.df_claims
 
-    if current_crm == 50: fullyRespClaim_col, partiallyRespClaim_col, respClaimSince2Y_col = st.columns(3)
+    if current_crm == 50: fullyRespClaim_col, partiallyRespClaim_col, respClaimSince3Y_col = st.columns(3)
     else: fullyRespClaim_col, partiallyRespClaim_col = st.columns(2)
 
     with fullyRespClaim_col:
@@ -45,17 +45,18 @@ def fill_antecedents(current_crm, date_last):
                     label_visibility="collapsed"
                     )
     if current_crm == 50:
-        with respClaimSince2Y_col:
+        with respClaimSince3Y_col:
             # Partially Responsible Claims
-            st.write("Sinistres périodes antérieures - responsables")
-            respClaimSince2YCount = st.number_input(
+            st.write("Sinistres 3 dernières années - responsabilité totale/partielle")
+            respClaimSince3YCount = st.number_input(
                         "Sinistres périodes antérieures - responsables",
                         min_value=0,
-                        value=((df_claims['claim_resp'] == 'Totale')*
-                               (convert_to_date(df_claims)['claim_date'] < date_last)).sum(),
+                        value= fullyRespClaimCount + partiallyRespClaimCount + 
+                        ((df_claims['claim_resp'].isin(['Totale', 'Partielle']))*
+                         (convert_to_date(df_claims)['claim_date'] < date_last)).sum(),
                         step=1,
                         label_visibility="collapsed"
                         )
-    else: respClaimSince2YCount = 0
+    else: respClaimSince3YCount = 0
 
-    return fullyRespClaimCount, partiallyRespClaimCount, respClaimSince2YCount
+    return fullyRespClaimCount, partiallyRespClaimCount, respClaimSince3YCount
