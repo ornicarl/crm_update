@@ -9,16 +9,23 @@ def initialize_session_state():
         st.session_state.date_today = datetime.datetime.today()
         # Initialize CRM
         st.session_state.current_crm = 100
+        # Initialize the claims DataFrame
+        st.session_state.df_claims = pd.DataFrame(columns=['claim_date', 'claim_resp'])
         # Flag to indicate initialization is complete
         st.session_state.init = True
 
-def initialize_variables(date_start):
+def initialize_periods(date_start, age_crm50):
     # Initialize dates
-    st.session_state.date_max = date_start-pd.DateOffset(days=1)
-    st.session_state.date_min = st.session_state.date_max-pd.DateOffset(years=3)
-    # Initialize the claims DataFrame
-    st.session_state.df_claims = pd.DataFrame(columns=['claim_date', 'claim_resp'])
+    st.session_state.date_max = date_start
+    if age_crm50==0:
+        st.session_state.date_min = st.session_state.date_max-pd.DateOffset(years=3)
+    else:
+        st.session_state.date_min = st.session_state.date_max-pd.DateOffset(years=1)-pd.DateOffset(months=2)
 
 def calculate_age(date, date_today):
     age = date_today.year - date.year - ((date_today.month, date_today.day) < (date.month, date.day))
     return age
+
+def convert_date_to_str(date):
+    date_str = f"{str(date)[8:10]}/{str(date)[5:7]}/{str(date)[:4]}"
+    return date_str

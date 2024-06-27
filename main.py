@@ -9,20 +9,19 @@ def main():
     initialize_session_state()
 
     # Display and store target Start Date current CRM infos
-    date_start, date_last, current_crm, age_crm50 = initialize_date_and_crm_info()
+    current_date_start, last_date_start, current_crm, age_crm50 = initialize_date_and_crm_info()
 
     # Initialize session state variables
-    initialize_variables(date_start)
+    initialize_periods(current_date_start, age_crm50)
 
     # Fill antecedents
-    fullyRespClaimCount, partiallyRespClaimCount, respClaimSince2YCount = fill_antecedents(current_crm, date_last)
+    fullyRespClaimCount, partiallyRespClaimCount, ignoredRespClaimCount = fill_antecedents(current_crm, age_crm50, current_date_start, last_date_start)
 
     # Calculate and display new CRM
-    new_crm = int(100*calculate_crm(
-        current_crm/100,
-        fullyRespClaimCount, 
-        partiallyRespClaimCount,
-        respClaimSince2YCount,
-        age_crm50 >= 3
-        ))
-    st.title(f'New CRM: {new_crm}%')
+    new_crm = round(100*calculate_crm(current_crm/100, fullyRespClaimCount, partiallyRespClaimCount), 0)
+    st.title(f'Nouveau CRM: {int(new_crm)}%')
+    if new_crm == 50:
+        if ignoredRespClaimCount > 0 or current_crm > 50:
+            new_age_crm50 = 0
+        else: new_age_crm50 = age_crm50
+        st.title(f'Ancienneté bonus 50: {new_age_crm50}')

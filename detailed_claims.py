@@ -12,12 +12,15 @@ def fill_detailed_claims():
     # Configure column settings for the data editor
     column_config = configure_column_config(st.session_state.date_min, 
                                             st.session_state.date_max, 
-                                            ['Non responsable', 'Totale', 'Partielle'])
+                                            ['Totale', 'Partielle', 'Non responsable'])
 
     # Display the data editor for claims input
     df_claims = display_data_editor(st.session_state.df_claims, column_config)
 
-    return df_claims
+    # Keep only responsible claims and sort
+    df_resp_claims = df_claims[df_claims['claim_resp'] != 'Non responsable'].reset_index(drop=True)
+
+    return df_resp_claims
 
 # Function to retrieve the claims DataFrame
 def retrieve_df_claims():
@@ -35,7 +38,7 @@ def configure_column_config(date_min, date_max, resp_options):
         'claim_date': st.column_config.DateColumn(
             'Date Sinistre', width='medium',
             format="DD/MM/YYYY", min_value=date_min, max_value=date_max,
-            required=True, default=date_max
+            required=True, default=date_max-pd.DateOffset(months=2)-pd.DateOffset(days=1)
         ),
         'claim_resp': st.column_config.SelectboxColumn(
             'Responsabilité', width='medium',
