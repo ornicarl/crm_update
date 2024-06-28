@@ -9,17 +9,16 @@ def initialize_date_and_crm_info():
         st.write("Début nouveau contrat")
         current_date_start = st.date_input(
             "Start date",
-            min_value=st.session_state.date_today,
             format="DD/MM/YYYY",
             label_visibility="collapsed"
             )
 
     with last_date_start_col:
         # Display last effective date
-        st.write("Début contrat actuel")
+        st.write("Début contrat précédent")
         last_date_start = st.date_input(
             "Last date",
-            min_value=st.session_state.date_today-pd.DateOffset(years=1),
+            min_value=current_date_start-pd.DateOffset(years=1),
             value=current_date_start-pd.DateOffset(years=1),
             format="DD/MM/YYYY",
             label_visibility="collapsed"

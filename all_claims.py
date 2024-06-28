@@ -65,7 +65,7 @@ def fill_antecedents(current_crm, age_crm50, current_date_start, last_date_start
             if previousRespClaimCount == 0:
                 if totalRespClaimCount_default > 0:
                     st.write(f"Pas de sinistre responsable survenu du {previous_cutoff_start_str} au {previous_cutoff_end_str}.")
-                    st.write(f"Le premier sinistre responsable survenu le {convert_date_to_str(df_claims.loc[df_claims['claim_date'].argmin(), 'claim_date'])} sur la période de référence est ignoré.")
+                    st.write(f"Le premier sinistre responsable survenu le {convert_date_to_str(df_claims.loc[df_claims['claim_date'].argmin(), 'claim_date'])} sur la période de référence n'est pas compté.")
                     df_claims = df_claims.drop(index=df_claims['claim_date'].argmin())
                     ignoredRespClaimCount += 1
                     totalRespClaimCount_default -= ignoredRespClaimCount
