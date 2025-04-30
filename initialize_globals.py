@@ -14,13 +14,13 @@ def initialize_session_state():
         # Flag to indicate initialization is complete
         st.session_state.init = True
 
-def initialize_periods(date_start, age_crm50):
+def initialize_periods(date_start, age_crm50, reference_period_ignored_months):
     # Initialize dates
     st.session_state.date_max = date_start
     if age_crm50==0:
         st.session_state.date_min = st.session_state.date_max-pd.DateOffset(years=3)
     else:
-        st.session_state.date_min = st.session_state.date_max-pd.DateOffset(years=1)-pd.DateOffset(months=2)
+        st.session_state.date_min = st.session_state.date_max-pd.DateOffset(years=1)-pd.DateOffset(months=reference_period_ignored_months)
 
 def calculate_age(date, date_today):
     age = date_today.year - date.year - ((date_today.month, date_today.day) < (date.month, date.day))

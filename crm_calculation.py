@@ -1,11 +1,14 @@
-def calculate_crm(current_crm, fullyRespClaimCount, partiallyRespClaimCount):
+def calculate_crm(current_crm, fullyRespClaimCount, partiallyRespClaimCount, last_period_months):
 
     # parameters
 
     min_crm = 0.5
     max_crm = 3.5
     
-    bonus = -0.05
+    if last_period_months >= 10:
+        bonus = -0.05
+    else:
+        bonus = 0
     malus = 0.25
     
     # calculation

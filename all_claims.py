@@ -1,7 +1,12 @@
 from initialize_date_and_crm import *
 from detailed_claims import *
 
-def fill_antecedents(current_crm, age_crm50, current_date_start, last_date_start):
+def fill_antecedents(current_crm, age_crm50, last_cutoff_start, last_cutoff_end, previous_cutoff_start, previous_cutoff_end):
+
+    last_cutoff_start_str = convert_date_to_str(last_cutoff_start)
+    last_cutoff_end_str = convert_date_to_str(last_cutoff_end)
+    previous_cutoff_start_str = convert_date_to_str(previous_cutoff_start)
+    previous_cutoff_end_str = convert_date_to_str(previous_cutoff_end)
 
     # Select CRM calculation method
     st.write("Méthode de saisie des sinistres survenus les 3 dernières années")
@@ -15,19 +20,6 @@ def fill_antecedents(current_crm, age_crm50, current_date_start, last_date_start
         label_visibility='collapsed',
         horizontal=True
     )
-
-    # Initialize date variables
-    last_cutoff_start = (last_date_start-pd.DateOffset(months=2)).date()
-    last_cutoff_end = (current_date_start-pd.DateOffset(months=2)-pd.DateOffset(days=1)).date()
-    previous_cutoff_start = st.session_state.date_max-pd.DateOffset(years=3)
-    previous_cutoff_end = (last_date_start-pd.DateOffset(months=2)-pd.DateOffset(days=1)).date()
-    
-    last_cutoff_start_str = convert_date_to_str(last_cutoff_start)
-    last_cutoff_end_str = convert_date_to_str(last_cutoff_end)
-    previous_cutoff_start_str = convert_date_to_str(previous_cutoff_start)
-    previous_cutoff_end_str = convert_date_to_str(previous_cutoff_end)
-
-    st.write(f'La période de référence pour le calcul du nouveau CRM correspond à la période du {last_cutoff_start_str} au {last_cutoff_end_str} (2 mois précédant le début du nouveau contrat).')
 
     if calculation_method == "Détaillée":
          df_claims = convert_to_date(fill_detailed_claims())

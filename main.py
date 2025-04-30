@@ -9,16 +9,16 @@ def main():
     initialize_session_state()
 
     # Display and store target Start Date current CRM infos
-    current_date_start, last_date_start, current_crm, age_crm50 = initialize_date_and_crm_info()
+    period_start_date, last_cutoff_start, last_cutoff_end, previous_cutoff_start, previous_cutoff_end, current_crm, age_crm50, reference_period_ignored_months, last_period_months = initialize_date_and_crm_info()
 
     # Initialize session state variables
-    initialize_periods(current_date_start, age_crm50)
+    initialize_periods(period_start_date, age_crm50, reference_period_ignored_months)
 
     # Fill antecedents
-    fullyRespClaimCount, partiallyRespClaimCount, ignoredRespClaimCount = fill_antecedents(current_crm, age_crm50, current_date_start, last_date_start)
+    fullyRespClaimCount, partiallyRespClaimCount, ignoredRespClaimCount = fill_antecedents(current_crm, age_crm50, last_cutoff_start, last_cutoff_end, previous_cutoff_start, previous_cutoff_end)
 
     # Calculate and display new CRM
-    new_crm = round(100*calculate_crm(current_crm/100, fullyRespClaimCount, partiallyRespClaimCount), 0)
+    new_crm = round(100*calculate_crm(current_crm/100, fullyRespClaimCount, partiallyRespClaimCount, last_period_months), 0)
     st.title(f'Nouveau CRM: {int(new_crm)}%')
     if new_crm == 50:
         if ignoredRespClaimCount > 0 or current_crm > 50:
