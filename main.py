@@ -9,10 +9,7 @@ def main():
     initialize_session_state()
 
     # Display and store target Start Date current CRM infos
-    period_start_date, last_cutoff_start, last_cutoff_end, previous_cutoff_start, previous_cutoff_end, current_crm, age_crm50, reference_period_ignored_months, last_period_months = initialize_date_and_crm_info()
-
-    # Initialize session state variables
-    initialize_periods(period_start_date, age_crm50, reference_period_ignored_months)
+    period_start_date, last_cutoff_start, last_cutoff_end, previous_cutoff_start, previous_cutoff_end, current_crm, age_crm50, last_period_months = initialize_date_and_crm_info()
 
     # Fill antecedents
     fullyRespClaimCount, partiallyRespClaimCount, ignoredRespClaimCount = fill_antecedents(current_crm, age_crm50, last_cutoff_start, last_cutoff_end, previous_cutoff_start, previous_cutoff_end)

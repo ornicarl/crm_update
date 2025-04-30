@@ -83,13 +83,16 @@ def initialize_date_and_crm_info():
                 )
     else: age_crm50 = 0
 
-    # Initialize CRM reference period
+    # Initialize session state variables
     match mode:
         case "Nouvelle souscription":
             reference_period_ignored_months = 0
         case "Police en portefeuille":
             reference_period_ignored_months = 2
+
+    initialize_periods(period_start_date, age_crm50, reference_period_ignored_months)
     
+    # Initialize CRM reference period
     last_cutoff_start = (last_period_start_date-pd.DateOffset(months=reference_period_ignored_months)).date()
     last_cutoff_end = (period_start_date-pd.DateOffset(months=reference_period_ignored_months)-pd.DateOffset(days=1)).date()
     previous_cutoff_start = st.session_state.date_max-pd.DateOffset(years=3)
@@ -105,4 +108,4 @@ def initialize_date_and_crm_info():
     if mode == "Police en portefeuille":
         st.write(f'Les 2 derniers mois de la période en cours sont ignorés lors du renouvellement.')
     
-    return period_start_date, last_cutoff_start, last_cutoff_end, previous_cutoff_start, previous_cutoff_end, current_crm, age_crm50, reference_period_ignored_months, last_period_months
+    return period_start_date, last_cutoff_start, last_cutoff_end, previous_cutoff_start, previous_cutoff_end, current_crm, age_crm50, last_period_months
