@@ -24,7 +24,7 @@ def initialize_date_and_crm_info():
         # Display last effective date
         match mode:
             case "Nouvelle souscription":
-                st.write("Date d'édition du RI")
+                st.write("Date du CRM")
             case "Police en portefeuille":
                 st.write("Effet période précédente")
         last_period_start_date = st.date_input(
@@ -39,7 +39,7 @@ def initialize_date_and_crm_info():
         # Fill CRM
         match mode:
             case "Nouvelle souscription":
-                st.write("CRM déclaré (%)")
+                st.write("CRM indiqué sur le RI (%)")
             case "Police en portefeuille":
                 st.write("CRM actuel (%)")
         current_crm = st.number_input(
