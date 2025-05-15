@@ -174,9 +174,9 @@ def initialize_date_and_crm_info():
         st.write(
             f"La période de référence pour le calcul du nouveau CRM correspond à la période du {cutoff_start_str} au {cutoff_end_str}."
         )
-        if mode == "Nouvelle souscription" and reference_period["period_months"] < 10:
+        if mode == "Nouvelle souscription" and reference_period["period_months"] < 9:
             st.write(
-                "Le CRM ne peut pas s'améliorer car elle s'étale sur moins de 10 mois."
+                "Le CRM ne peut pas s'améliorer car elle s'étale sur moins de 9 mois."
             )
         if mode == "Police en portefeuille":
             st.write(

@@ -7,7 +7,7 @@ def calculate_crm(
 ):
     
     period_months = reference_period["period_months"]
-    fullyRespClaimCount = reference_period["reference_period"]
+    fullyRespClaimCount = reference_period["fullyRespClaimCount"]
     partiallyRespClaimCount = reference_period["partiallyRespClaimCount"]
 
     # parameters

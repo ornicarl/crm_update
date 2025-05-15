@@ -9,6 +9,7 @@ def fill_antecedents(
     current_crm,
     age_crm50,
 ):
+    list_reference_periods_with_claims = list_reference_periods
     previous_cutoff_start_str = convert_date_to_str(previous_cutoff_start)
     previous_cutoff_end_str = convert_date_to_str(previous_cutoff_end)
 
@@ -160,6 +161,6 @@ def fill_antecedents(
             "partiallyRespClaimCount": partiallyRespClaimCount,
             "ignoredRespClaimCount": ignoredRespClaimCount
         }
-        reference_period.update(reference_period_claims)
+        list_reference_periods_with_claims[reference_period_idx].update(reference_period_claims)
 
-    return list_reference_periods
+    return list_reference_periods_with_claims

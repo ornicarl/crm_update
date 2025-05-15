@@ -17,7 +17,7 @@ def main():
     ) = initialize_date_and_crm_info()
 
     # Fill antecedents
-    list_reference_periods = (
+    list_reference_periods_with_claims = (
         fill_antecedents(
             list_reference_periods,
             previous_cutoff_start,
