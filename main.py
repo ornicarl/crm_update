@@ -16,6 +16,8 @@ def main():
         age_crm50,
     ) = initialize_date_and_crm_info()
 
+    st.write(list_reference_periods)
+
     # Fill antecedents
     list_reference_periods_with_claims = (
         fill_antecedents(
@@ -29,7 +31,7 @@ def main():
 
     # Calculate and display new CRM
     next_crm = current_crm
-    for reference_period_idx, reference_period in enumerate(list_reference_periods):
+    for reference_period_idx, reference_period in enumerate(list_reference_periods_with_claims):
         
         st.write(
             f"Période de référence N°{reference_period_idx}."
