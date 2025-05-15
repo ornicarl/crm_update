@@ -16,10 +16,8 @@ def main():
         age_crm50,
     ) = initialize_date_and_crm_info()
 
-    st.write(list_reference_periods)
-
     # Fill antecedents
-    list_reference_periods_with_claims = (
+    list_reference_periods = (
         fill_antecedents(
             list_reference_periods,
             previous_cutoff_start,
@@ -31,11 +29,8 @@ def main():
 
     # Calculate and display new CRM
     next_crm = current_crm
-    for reference_period_idx, reference_period in enumerate(list_reference_periods_with_claims):
-        
-        st.write(
-            f"Période de référence N°{reference_period_idx}."
-        )
+    next_age_crm50 = age_crm50
+    for reference_period_idx, reference_period in enumerate(list_reference_periods, 1):
         
         next_crm = round(
             100
@@ -45,11 +40,11 @@ def main():
             ),
             0,
         )
-        st.title(f"Nouveau CRM: {int(next_crm)}%")
+        st.title(f"Nouveau CRM période N°{reference_period_idx}: {int(next_crm)}%")
+    
         if next_crm == 50:
             if reference_period["ignoredRespClaimCount"] > 0 or next_crm > 50:
                 next_age_crm50 = 0
             else:
-                next_age_crm50 = age_crm50
-    
-    st.title(f"Ancienneté bonus 50: {next_age_crm50}")
+                next_age_crm50 += 1
+            st.title(f"Ancienneté bonus 50 période N°{reference_period_idx}: {next_age_crm50}")

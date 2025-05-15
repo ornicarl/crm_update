@@ -1,3 +1,5 @@
+from datetime import timedelta
+from math import ceil
 from crm_calculation import calculate_crm_max
 from initialize_globals import *
 
@@ -31,6 +33,7 @@ def initialize_date_and_crm_info():
         driving_license_date = st.date_input(
             "Driving license date",
             format="DD/MM/YYYY",
+            min_value=period_start_date - pd.DateOffset(years=70),
             value=period_start_date - pd.DateOffset(years=1),
             label_visibility="collapsed"
         )
@@ -129,20 +132,28 @@ def initialize_date_and_crm_info():
 
     current_driving_license_age = max(calculate_age(driving_license_date, previous_cutoff_end), 0)
     current_crm_max = calculate_crm_max(current_driving_license_age)
+    last_period_start_date_str = convert_date_to_str(last_period_start_date)
 
+    if driving_license_date > last_period_start_date:
+        st.write(
+            f":red[L'obtention du permis ne peut pas être antérieure au dernier contrat d'assurance.]",
+        )
     if current_crm < current_crm_max:
         st.write(
-            f":red[Le actuel CRM optimal compte tenu de l'ancienneté du permis ({current_driving_license_age} ans) est {current_crm_max}.]",
+            f":red[Le CRM actuel optimal compte tenu de l'ancienneté du permis au {last_period_start_date_str} ({current_driving_license_age} ans) est {current_crm_max}.]",
         )
     
     list_reference_periods = []
     match mode:
         
         case "Nouvelle souscription":
-            count_reference_periods = last_period_months // 12
+            count_reference_periods = ceil(last_period_months/12)
             next_cutoff_start = last_cutoff_start
             for reference_period_idx in range(count_reference_periods):
-                next_cutoff_end = min(next_cutoff_start + pd.DateOffset(years=1) - pd.DateOffset(days=1), last_cutoff_end)
+                next_cutoff_end = min(
+                    (next_cutoff_start.replace(year=next_cutoff_start.year + 1) - timedelta(days=1)),
+                    last_cutoff_end
+                )
                 next_period_months = (next_cutoff_end.year - next_cutoff_start.year) * 12 + (
                     next_cutoff_end.month - next_cutoff_start.month
                 )
@@ -152,7 +163,7 @@ def initialize_date_and_crm_info():
                     "period_months": next_period_months
                 }
                 list_reference_periods.append(reference_period)
-                next_cutoff_start += pd.DateOffset(years=1)
+                next_cutoff_start = next_cutoff_start.replace(year=next_cutoff_start.year + 1)
 
         case "Police en portefeuille":
             reference_period = {
@@ -162,25 +173,21 @@ def initialize_date_and_crm_info():
             }
             list_reference_periods.append(reference_period)
 
-    for reference_period_idx, reference_period in enumerate(list_reference_periods):
-        
-        st.write(
-            f"Période de référence N°{reference_period_idx}."
-        )
+    for reference_period_idx, reference_period in enumerate(list_reference_periods, 1):
 
         cutoff_start_str = convert_date_to_str(reference_period["cutoff_start"])
         cutoff_end_str = convert_date_to_str(reference_period["cutoff_end"])
 
         st.write(
-            f"La période de référence pour le calcul du nouveau CRM correspond à la période du {cutoff_start_str} au {cutoff_end_str}."
+            f"La période de référence N°{reference_period_idx} pour le calcul du nouveau CRM correspond à la période du {cutoff_start_str} au {cutoff_end_str}."
         )
         if mode == "Nouvelle souscription" and reference_period["period_months"] < 9:
             st.write(
-                "Le CRM ne peut pas s'améliorer car elle s'étale sur moins de 9 mois."
+                f"Le CRM ne peut pas s'améliorer sur la période de référence N°{reference_period_idx} car elle s'étale sur moins de 9 mois."
             )
         if mode == "Police en portefeuille":
             st.write(
-                "Les 2 derniers mois de la période en cours sont ignorés lors du renouvellement."
+                "Les 2 derniers mois de la période en cours sont ignorés lors de la mise à jour du CRM lors du renouvellement."
             )
 
     return (

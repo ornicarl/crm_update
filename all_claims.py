@@ -9,7 +9,6 @@ def fill_antecedents(
     current_crm,
     age_crm50,
 ):
-    list_reference_periods_with_claims = list_reference_periods
     previous_cutoff_start_str = convert_date_to_str(previous_cutoff_start)
     previous_cutoff_end_str = convert_date_to_str(previous_cutoff_end)
 
@@ -31,13 +30,18 @@ def fill_antecedents(
     else:
         df_claims = st.session_state.df_claims
     
-    for reference_period_idx, reference_period in enumerate(list_reference_periods):
+    for reference_period_idx, reference_period in enumerate(list_reference_periods, 1):
 
-        st.write(
+        st.title(
             f"Période de référence N°{reference_period_idx}."
         )
-        cutoff_start = reference_period["cutoff_start"].dt.date
-        cutoff_end = reference_period["cutoff_end"].dt.date
+
+        cutoff_start = reference_period["cutoff_start"]
+        cutoff_end = reference_period["cutoff_end"]
+        if hasattr(cutoff_start, "date"):
+            cutoff_start = cutoff_start.date()
+        if hasattr(cutoff_end, "date"):
+            cutoff_end = cutoff_end.date()
         cutoff_start_str = convert_date_to_str(cutoff_start)
         cutoff_end_str = convert_date_to_str(cutoff_end)
 
@@ -136,7 +140,7 @@ def fill_antecedents(
                 f"Sinistres du {cutoff_start_str} au {cutoff_end_str} - Responsabilité totale"
             )
             fullyRespClaimCount = st.number_input(
-                "Sinistres responsables",
+                f"Sinistres responsables période N°{reference_period_idx}",
                 min_value=0,
                 value=fullyRespClaimCount_default,
                 step=1,
@@ -149,7 +153,7 @@ def fill_antecedents(
                 f"Sinistres du {cutoff_start_str} au {cutoff_end_str} - Responsabilité partielle"
             )
             partiallyRespClaimCount = st.number_input(
-                "Sinistres partiellement responsables",
+                f"Sinistres partiellement responsables période N°{reference_period_idx}",
                 min_value=0,
                 value=partiallyRespClaimCount_default,
                 step=1,
@@ -162,6 +166,6 @@ def fill_antecedents(
             "partiallyRespClaimCount": partiallyRespClaimCount,
             "ignoredRespClaimCount": ignoredRespClaimCount
         }
-        list_reference_periods_with_claims[reference_period_idx].update(reference_period_claims)
+        reference_period.update(reference_period_claims)
 
-    return list_reference_periods_with_claims
+    return list_reference_periods
