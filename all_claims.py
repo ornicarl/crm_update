@@ -36,21 +36,22 @@ def fill_antecedents(
         st.write(
             f"Période de référence N°{reference_period_idx}."
         )
-        
-        cutoff_start_str = convert_date_to_str(reference_period["cutoff_start"])
-        cutoff_end_str = convert_date_to_str(reference_period["cutoff_end"])
+        cutoff_start = reference_period["cutoff_start"].dt.date
+        cutoff_end = reference_period["cutoff_end"].dt.date
+        cutoff_start_str = convert_date_to_str(cutoff_start)
+        cutoff_end_str = convert_date_to_str(cutoff_end)
 
         # Fully Responsible Claims
         fullyRespClaimCount_default = (
             (df_claims["claim_resp"] == "Totale")
-            * (df_claims["claim_date"] >= reference_period["cutoff_start"])
-            * (df_claims["claim_date"] <= reference_period["cutoff_end"])
+            * (df_claims["claim_date"] >= cutoff_start)
+            * (df_claims["claim_date"] <= cutoff_end)
         ).sum()
         # Partially Responsible Claims
         partiallyRespClaimCount_default = (
             (df_claims["claim_resp"] == "Partielle")
-            * (df_claims["claim_date"] >= reference_period["cutoff_start"])
-            * (df_claims["claim_date"] <= reference_period["cutoff_end"])
+            * (df_claims["claim_date"] >= cutoff_start)
+            * (df_claims["claim_date"] <= cutoff_end)
         ).sum()
         # Total Responsaible Claims
         totalRespClaimCount_default = (
@@ -97,14 +98,14 @@ def fill_antecedents(
                         # Fully Responsible Claims
                         fullyRespClaimCount_default = (
                             (df_claims["claim_resp"] == "Totale")
-                            * (df_claims["claim_date"] >= reference_period["cutoff_start"])
-                            * (df_claims["claim_date"] <= reference_period["cutoff_end"])
+                            * (df_claims["claim_date"] >= cutoff_start)
+                            * (df_claims["claim_date"] <= cutoff_end)
                         ).sum()
                         # Partially Responsible Claims
                         partiallyRespClaimCount_default = (
                             (df_claims["claim_resp"] == "Partielle")
-                            * (df_claims["claim_date"] >= reference_period["cutoff_start"])
-                            * (df_claims["claim_date"] <= reference_period["cutoff_end"])
+                            * (df_claims["claim_date"] >= cutoff_start)
+                            * (df_claims["claim_date"] <= cutoff_end)
                         ).sum()
                     else:
                         st.write(
