@@ -40,15 +40,22 @@ def initialize_date_and_crm_info():
         match mode:
             case "Nouvelle souscription":
                 st.write("Date du CRM")
+                last_period_start_date = st.date_input(
+                    "Last date",
+                    min_value=period_start_date - pd.DateOffset(years=10),
+                    value=period_start_date - pd.DateOffset(years=1),
+                    format="DD/MM/YYYY",
+                    label_visibility="collapsed",
+                )
             case "Police en portefeuille":
                 st.write("Effet période précédente")
-        last_period_start_date = st.date_input(
-            "Last date",
-            min_value=period_start_date - pd.DateOffset(years=1),
-            value=period_start_date - pd.DateOffset(years=1),
-            format="DD/MM/YYYY",
-            label_visibility="collapsed",
-        )
+                last_period_start_date = st.date_input(
+                    "Last date",
+                    min_value=period_start_date - pd.DateOffset(years=1),
+                    value=period_start_date - pd.DateOffset(years=1),
+                    format="DD/MM/YYYY",
+                    label_visibility="collapsed",
+                )
 
     with current_crm_col:
         # Fill CRM
@@ -129,28 +136,59 @@ def initialize_date_and_crm_info():
         st.write(
             f":red[Le actuel CRM optimal compte tenu de l'ancienneté du permis ({current_driving_license_age} ans) est {current_crm_max}.]",
         )
+    
+    list_reference_periods = []
+    match mode:
+        
+        case "Nouvelle souscription":
+            count_reference_periods = last_period_months // 12
+            next_cutoff_start = last_cutoff_start
+            for reference_period_idx in range(count_reference_periods):
+                next_cutoff_end = min(next_cutoff_start + pd.DateOffset(months=12), last_cutoff_end)
+                next_period_months = (next_cutoff_end.year - next_cutoff_end.year) * 12 + (
+                    next_cutoff_end.month - next_cutoff_end.month
+                )
+                reference_period = {
+                    "cutoff_start": next_cutoff_start,
+                    "cutoff_end": next_cutoff_end,
+                    "period_months": next_period_months
+                }
+                list_reference_periods.append(reference_period)
+                next_cutoff_start += pd.DateOffset(months=12)
 
-    last_cutoff_start_str = convert_date_to_str(last_cutoff_start)
-    last_cutoff_end_str = convert_date_to_str(last_cutoff_end)
+        case "Police en portefeuille":
+            reference_period = {
+                "cutoff_start": last_cutoff_start,
+                "cutoff_end": last_cutoff_end,
+                "period_months": last_period_months
+            }
+            list_reference_periods.append(reference_period)
 
-    st.write(
-        f"La période de référence pour le calcul du nouveau CRM correspond à la période du {last_cutoff_start_str} au {last_cutoff_end_str}."
-    )
-    if mode == "Nouvelle souscription" and last_period_months < 10:
+    for reference_period, reference_period_idx in enumerate(list_reference_periods):
+        
         st.write(
-            "Le CRM ne peut pas s'améliorer car elle s'étale sur moins de 10 mois."
+            f"Période de référence N°{reference_period_idx}."
         )
-    if mode == "Police en portefeuille":
+
+        cutoff_start_str = convert_date_to_str(reference_period["cutoff_start"])
+        cutoff_end_str = convert_date_to_str(reference_period["cutoff_end"])
+
         st.write(
-            "Les 2 derniers mois de la période en cours sont ignorés lors du renouvellement."
+            f"La période de référence pour le calcul du nouveau CRM correspond à la période du {cutoff_start_str} au {cutoff_end_str}."
         )
+        if mode == "Nouvelle souscription" and reference_period["period_months"] < 10:
+            st.write(
+                "Le CRM ne peut pas s'améliorer car elle s'étale sur moins de 10 mois."
+            )
+        if mode == "Police en portefeuille":
+            st.write(
+                "Les 2 derniers mois de la période en cours sont ignorés lors du renouvellement."
+            )
 
     return (
-        last_cutoff_start,
-        last_cutoff_end,
+        list_reference_periods,
         previous_cutoff_start,
         previous_cutoff_end,
         current_crm,
         age_crm50,
-        last_period_months,
     )

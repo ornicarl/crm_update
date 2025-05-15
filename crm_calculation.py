@@ -3,14 +3,19 @@ from math import floor
 
 
 def calculate_crm(
-    current_crm, fullyRespClaimCount, partiallyRespClaimCount, last_period_months
+    current_crm, reference_period
 ):
+    
+    period_months = reference_period["period_months"]
+    fullyRespClaimCount = reference_period["reference_period"]
+    partiallyRespClaimCount = reference_period["partiallyRespClaimCount"]
+
     # parameters
 
     min_crm = 0.5
     max_crm = 3.5
 
-    if last_period_months >= 10:
+    if period_months >= 10:
         bonus = -0.05
     else:
         bonus = 0
