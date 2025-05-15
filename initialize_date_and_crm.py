@@ -31,6 +31,7 @@ def initialize_date_and_crm_info():
         driving_license_date = st.date_input(
             "Driving license date",
             format="DD/MM/YYYY",
+            value=period_start_date - pd.DateOffset(years=1),
             label_visibility="collapsed"
         )
 
