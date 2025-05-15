@@ -13,9 +13,9 @@ def fill_antecedents(
     previous_cutoff_end_str = convert_date_to_str(previous_cutoff_end)
 
     # Select CRM calculation method
-    st.write("Méthode de saisie des sinistres survenus les 3 dernières années")
+    st.write("Méthode de saisie des sinistres")
     calculation_method = st.radio(
-        "Méthode de saisie des sinistres survenus les 3 dernières années",
+        "Méthode de saisie des sinistres",
         ["Détaillée", "Agrégée"],
         captions=[
             "Saisie des sinistres ligne à ligne",

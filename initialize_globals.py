@@ -16,16 +16,20 @@ def initialize_session_state():
         st.session_state.init = True
 
 
-def initialize_periods(date_start, age_crm50, reference_period_ignored_months):
+def initialize_periods(date_start, last_date_start, age_crm50, reference_period_ignored_months):
     # Initialize dates
     st.session_state.date_max = date_start
     if age_crm50 == 0:
-        st.session_state.date_min = st.session_state.date_max - pd.DateOffset(years=3)
+        st.session_state.date_min = min(
+            (st.session_state.date_max - pd.DateOffset(years=3)).date(),
+            last_date_start
+        )
     else:
-        st.session_state.date_min = (
-            st.session_state.date_max
+        st.session_state.date_min = min(
+            (st.session_state.date_max
             - pd.DateOffset(years=1)
-            - pd.DateOffset(months=reference_period_ignored_months)
+            - pd.DateOffset(months=reference_period_ignored_months)).date(),
+            last_date_start
         )
 
 

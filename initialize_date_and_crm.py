@@ -109,7 +109,7 @@ def initialize_date_and_crm_info():
         case "Police en portefeuille":
             reference_period_ignored_months = 2
 
-    initialize_periods(period_start_date, age_crm50, reference_period_ignored_months)
+    initialize_periods(period_start_date, last_period_start_date, age_crm50, reference_period_ignored_months)
 
     # Initialize CRM reference period
     last_cutoff_start = (
