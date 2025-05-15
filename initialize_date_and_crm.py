@@ -128,9 +128,7 @@ def initialize_date_and_crm_info():
     )
 
     current_driving_license_age = max(calculate_age(driving_license_date, previous_cutoff_end), 0)
-    new_driving_license_age = max(calculate_age(driving_license_date, last_cutoff_end), 0)
     current_crm_max = calculate_crm_max(current_driving_license_age)
-    new_crm_max = calculate_crm_max(new_driving_license_age)
 
     if current_crm < current_crm_max:
         st.write(
@@ -144,9 +142,9 @@ def initialize_date_and_crm_info():
             count_reference_periods = last_period_months // 12
             next_cutoff_start = last_cutoff_start
             for reference_period_idx in range(count_reference_periods):
-                next_cutoff_end = min(next_cutoff_start + pd.DateOffset(months=12), last_cutoff_end)
-                next_period_months = (next_cutoff_end.year - next_cutoff_end.year) * 12 + (
-                    next_cutoff_end.month - next_cutoff_end.month
+                next_cutoff_end = min(next_cutoff_start + pd.DateOffset(years=1) - pd.DateOffset(days=1), last_cutoff_end)
+                next_period_months = (next_cutoff_end.year - next_cutoff_start.year) * 12 + (
+                    next_cutoff_end.month - next_cutoff_start.month
                 )
                 reference_period = {
                     "cutoff_start": next_cutoff_start,
@@ -154,7 +152,7 @@ def initialize_date_and_crm_info():
                     "period_months": next_period_months
                 }
                 list_reference_periods.append(reference_period)
-                next_cutoff_start += pd.DateOffset(months=12)
+                next_cutoff_start += pd.DateOffset(years=1)
 
         case "Police en portefeuille":
             reference_period = {
@@ -164,7 +162,7 @@ def initialize_date_and_crm_info():
             }
             list_reference_periods.append(reference_period)
 
-    for reference_period, reference_period_idx in enumerate(list_reference_periods):
+    for reference_period_idx, reference_period in enumerate(list_reference_periods):
         
         st.write(
             f"Période de référence N°{reference_period_idx}."

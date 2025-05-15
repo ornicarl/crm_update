@@ -3,11 +3,11 @@ from detailed_claims import *
 
 
 def fill_antecedents(
-    current_crm,
-    age_crm50,
     list_reference_periods,
     previous_cutoff_start,
     previous_cutoff_end,
+    current_crm,
+    age_crm50,
 ):
     previous_cutoff_start_str = convert_date_to_str(previous_cutoff_start)
     previous_cutoff_end_str = convert_date_to_str(previous_cutoff_end)
@@ -30,7 +30,7 @@ def fill_antecedents(
     else:
         df_claims = st.session_state.df_claims
     
-    for reference_period, reference_period_idx in enumerate(list_reference_periods):
+    for reference_period_idx, reference_period in enumerate(list_reference_periods):
 
         st.write(
             f"Période de référence N°{reference_period_idx}."
