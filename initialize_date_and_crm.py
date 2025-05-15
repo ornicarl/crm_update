@@ -1,8 +1,10 @@
+from crm_calculation import calculate_crm_max
 from initialize_globals import *
 
 
 def initialize_date_and_crm_info():
-    mode_col, period_start_col, last_period_start_col, current_crm_col = st.columns(4)
+
+    mode_col, period_start_col = st.columns(2)
 
     with mode_col:
         mode = st.radio(
@@ -18,6 +20,18 @@ def initialize_date_and_crm_info():
                 st.write("Effet nouvelle période")
         period_start_date = st.date_input(
             "Start date", format="DD/MM/YYYY", label_visibility="collapsed"
+        )
+
+
+    driving_license_col, last_period_start_col, current_crm_col = st.columns(3)
+
+    with driving_license_col:
+        # Display policy period start
+        st.write("Permis obtenu le")
+        driving_license_date = st.date_input(
+            "Driving license date",
+            format="DD/MM/YYYY",
+            label_visibility="collapsed"
         )
 
     with last_period_start_col:
@@ -104,6 +118,16 @@ def initialize_date_and_crm_info():
     last_period_months = (last_cutoff_end.year - last_cutoff_start.year) * 12 + (
         last_cutoff_end.month - last_cutoff_start.month
     )
+
+    current_driving_license_age = max(calculate_age(driving_license_date, previous_cutoff_end), 0)
+    new_driving_license_age = max(calculate_age(driving_license_date, last_cutoff_end), 0)
+    current_crm_max = calculate_crm_max(current_driving_license_age)
+    new_crm_max = calculate_crm_max(new_driving_license_age)
+
+    if current_crm < current_crm_max:
+        st.write(
+            f":red[Le actuel CRM optimal compte tenu de l'ancienneté du permis ({current_driving_license_age} ans) est {current_crm_max}.]",
+        )
 
     last_cutoff_start_str = convert_date_to_str(last_cutoff_start)
     last_cutoff_end_str = convert_date_to_str(last_cutoff_end)

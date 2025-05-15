@@ -1,3 +1,7 @@
+from datetime import UTC, datetime
+from math import floor
+
+
 def calculate_crm(
     current_crm, fullyRespClaimCount, partiallyRespClaimCount, last_period_months
 ):
@@ -20,6 +24,27 @@ def calculate_crm(
     )
 
     adj_crm = adj_bonus * adj_malus
-    new_crm = max(min(current_crm * adj_crm, max_crm), min_crm)
+    new_crm = floor(100*max(min(current_crm * adj_crm, max_crm), min_crm))/100
+    new_crm = max(min(int((current_crm * adj_crm) * 100 + 0.00001) / 100, max_crm), min_crm)
 
     return new_crm
+
+CRM_MAX_PER_LICENCE_AGE_MAPPING = {
+    0: 100,
+    1: 95,
+    2: 90,
+    3: 85,
+    4: 80,
+    5: 76,
+    6: 72,
+    7: 68,
+    8: 64,
+    9: 60,
+    10: 57,
+    11: 54,
+    12: 51,
+}
+
+def calculate_crm_max(driving_license_age: int):
+    return CRM_MAX_PER_LICENCE_AGE_MAPPING.get(driving_license_age, 50)
+
